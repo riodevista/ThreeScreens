@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">ThreeScreens</string>
+    <string name="login">Войти</string>
+    <string name="username">Имя пользователя</string>
+    <string name="password">Пароль</string>
+    <string name="logout">Выйти</string>
+    <string name="enter_username">Введите имя пользователя</string>
+    <string name="enter_password">Введите пароль</string>
+</resources>
