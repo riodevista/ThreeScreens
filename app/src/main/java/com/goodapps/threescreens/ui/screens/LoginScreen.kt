@@ -25,9 +25,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -38,6 +42,7 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.goodapps.threescreens.R
 import com.goodapps.threescreens.core.ui.common.Input
+import com.goodapps.threescreens.core.ui.common.dpadFocusable
 import com.goodapps.threescreens.core.ui.theme.Shapes
 import com.goodapps.threescreens.ui.view_models.LoginViewModel
 
@@ -56,6 +61,7 @@ fun LoginScreen(
             when (event) {
                 Lifecycle.Event.ON_STOP, Lifecycle.Event.ON_DESTROY -> {
                     keyboardController?.hide()
+
                 }
                 else -> {}
             }
@@ -67,7 +73,8 @@ fun LoginScreen(
     }
     val nameInputFieldState = remember { mutableStateOf("") }
     val passwordInputFieldState = remember { mutableStateOf("") }
-
+    val nameInputFocusRequester = FocusRequester()
+    val passwordInputFocusRequester = FocusRequester()
     Column(
         Modifier
             .fillMaxHeight()
@@ -82,29 +89,26 @@ fun LoginScreen(
         UsernameInput(
             viewModel = viewModel,
             inputStateField = nameInputFieldState,
-            showError = screenModel.value.showUsernameError
+            showError = screenModel.value.showUsernameError,
+            focusRequester = nameInputFocusRequester,
+            keyboardController = keyboardController
         )
         Spacer(Modifier.height(16.dp))
         PasswordInput(
             viewModel = viewModel,
             inputStateField = passwordInputFieldState,
-            showError = screenModel.value.showPasswordError
+            showError = screenModel.value.showPasswordError,
+            focusRequester = passwordInputFocusRequester
         )
         Spacer(Modifier.weight(0.5f))
-        Button(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(52.dp),
-            shape = Shapes.large,
-            onClick = {
-                viewModel.login(
-                    context.applicationContext,
-                    nameInputFieldState.value,
-                    passwordInputFieldState.value
-                )
-            }) {
-            Text(text = stringResource(R.string.login))
+        val loginButtonAction = {
+            viewModel.login(
+                context.applicationContext,
+                nameInputFieldState.value,
+                passwordInputFieldState.value
+            )
         }
+        LoginButton(clickAction = loginButtonAction)
         Spacer(Modifier.weight(3f))
     }
 
@@ -116,14 +120,20 @@ fun LoginScreen(
     }
 }
 
+@ExperimentalComposeUiApi
 @Composable
 fun UsernameInput(
     viewModel: LoginViewModel,
     inputStateField: MutableState<String>,
-    showError: Boolean
+    showError: Boolean,
+    focusRequester: FocusRequester,
+    keyboardController: SoftwareKeyboardController?
 ) {
     Column {
         Input(
+            modifier = Modifier.dpadFocusable(onClick = {
+                focusRequester.requestFocus()
+            }),
             text = inputStateField.value,
             onTextChange = {
                 inputStateField.value = it
@@ -133,16 +143,17 @@ fun UsernameInput(
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Text,
                 imeAction = ImeAction.Next,
-            )
+            ),
+            focusRequester = focusRequester
         )
-        Box(Modifier.defaultMinSize(minHeight = 30.dp)) {
-            if (showError) {
-                Text(
-                    modifier = Modifier.padding(all = 4.dp),
-                    text = stringResource(R.string.enter_username),
-                    color = MaterialTheme.colors.error
-                )
-            }
+    }
+    Box(Modifier.defaultMinSize(minHeight = 30.dp)) {
+        if (showError) {
+            Text(
+                modifier = Modifier.padding(all = 4.dp),
+                text = stringResource(R.string.enter_username),
+                color = MaterialTheme.colors.error
+            )
         }
     }
 }
@@ -153,10 +164,16 @@ fun PasswordInput(
     viewModel: LoginViewModel,
     inputStateField: MutableState<String>,
     showError: Boolean,
+    focusRequester: FocusRequester
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
+    val focusManager = LocalFocusManager.current
     Column {
         Input(
+            modifier = Modifier
+                .dpadFocusable(onClick = {
+                    focusRequester.requestFocus()
+                }),
             text = inputStateField.value,
             onTextChange = {
                 inputStateField.value = it
@@ -170,8 +187,10 @@ fun PasswordInput(
             keyboardActions = KeyboardActions(
                 onDone = {
                     keyboardController?.hide()
+                    focusManager.moveFocus(FocusDirection.Next)
                 }
             ),
+            focusRequester = focusRequester,
             visualTransformation = PasswordVisualTransformation()
         )
         Box(Modifier.defaultMinSize(minHeight = 30.dp)) {
@@ -183,5 +202,22 @@ fun PasswordInput(
                 )
             }
         }
+    }
+}
+
+@ExperimentalComposeUiApi
+@Composable
+fun LoginButton(
+    clickAction: () -> Unit
+) {
+    Button(
+        modifier = Modifier
+            .fillMaxWidth()
+            .dpadFocusable(clickAction)
+            .height(52.dp),
+        shape = Shapes.large,
+        onClick = clickAction
+    ) {
+        Text(text = stringResource(R.string.login))
     }
 }
