@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">ThreeScreens</string>
+    <string name="app_name">TvLook</string>
     <string name="login">Войти</string>
     <string name="username">Имя пользователя</string>
     <string name="password">Пароль</string>
