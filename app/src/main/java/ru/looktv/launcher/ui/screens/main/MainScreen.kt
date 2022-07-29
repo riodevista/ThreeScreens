@@ -43,6 +43,7 @@ fun MainScreen() {
         ) {
             when (selectedButton.value) {
                 0 -> HomeScreen()
+                1 -> AppsScreen()
                 else -> EmptyScreen(
                     Modifier.align(Alignment.Center),
                     text = "Скоро здесь что-то будет"
