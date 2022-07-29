@@ -14,7 +14,6 @@ fun BannerOverlay(modifier: Modifier = Modifier) {
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .fillMaxHeight(1f)
             .background(
                 brush = Brush.horizontalGradient(
                     colors = listOf(
