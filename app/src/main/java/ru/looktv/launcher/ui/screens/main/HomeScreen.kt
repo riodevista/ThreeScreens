@@ -37,10 +37,10 @@ import ru.looktv.launcher.R
 import ru.looktv.launcher.core.ui.common.BannerOverlay
 import ru.looktv.launcher.core.ui.common.CircleButton
 import ru.looktv.launcher.core.ui.common.HorizontalSelectableDots
-import ru.looktv.launcher.ui.models.AppItem
 import ru.looktv.launcher.ui.models.ContinueWatchingItem
 import ru.looktv.launcher.ui.models.FavoriteItem
 import ru.looktv.launcher.ui.models.PromoItem
+import ru.looktv.launcher.ui.models.common.AppItem
 import ru.looktv.launcher.ui.view_models.HomeScreenViewModel
 
 private val NAV_BAR_WIDTH = 68.dp

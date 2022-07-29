@@ -4,11 +4,11 @@ import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import ru.looktv.launcher.R
-import ru.looktv.launcher.ui.models.AppItem
 import ru.looktv.launcher.ui.models.ContinueWatchingItem
 import ru.looktv.launcher.ui.models.FavoriteItem
 import ru.looktv.launcher.ui.models.HomeScreenModel
 import ru.looktv.launcher.ui.models.PromoItem
+import ru.looktv.launcher.ui.models.common.AppItem
 
 class HomeScreenViewModel() : ViewModel() {
     private val _screenModel = MutableStateFlow(
@@ -23,11 +23,11 @@ class HomeScreenViewModel() : ViewModel() {
             ),
             apps = listOf(
                 AppItem(R.drawable.dummy_app),
-                AppItem(R.drawable.dummy_app),
-                AppItem(R.drawable.dummy_app),
-                AppItem(R.drawable.dummy_app),
-                AppItem(R.drawable.dummy_app),
-                AppItem(R.drawable.dummy_app)
+                AppItem(R.drawable.dummy_app_1),
+                AppItem(R.drawable.dummy_app_2),
+                AppItem(R.drawable.dummy_app_3),
+                AppItem(R.drawable.dummy_app_4),
+                AppItem(R.drawable.dummy_app_5),
             ),
             continues = listOf(
                 ContinueWatchingItem(R.drawable.dummy_continue),
