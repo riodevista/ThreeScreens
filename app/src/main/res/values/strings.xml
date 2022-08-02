@@ -7,4 +7,7 @@
     <string name="enter_username">Введите имя пользователя</string>
     <string name="enter_password">Введите пароль</string>
     <string name="apps">Приложения</string>
+    <string name="profile">Личный кабинет</string>
+    <string name="coming_soon">Скоро здесь что-то будет</string>
+    <string name="show_all_history">Показать весь список</string>
 </resources>

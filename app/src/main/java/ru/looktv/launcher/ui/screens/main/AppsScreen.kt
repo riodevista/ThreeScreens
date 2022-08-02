@@ -46,7 +46,9 @@ import ru.looktv.launcher.ui.view_models.AppsScreenViewModel
 private val NAV_BAR_WIDTH = 68.dp
 
 @Composable
-fun AppsScreen() {
+fun AppsScreen(
+    onProfileClick: () -> Unit
+) {
     val viewModel: AppsScreenViewModel = viewModel()
     val screenModel = viewModel.screenModel.collectAsState()
 
@@ -86,6 +88,7 @@ fun AppsScreen() {
                 CircleButton(
                     iconId = R.drawable.ic_profile,
                 ) {
+                    onProfileClick()
                 }
             }
             Spacer(modifier = Modifier.height(26.dp))

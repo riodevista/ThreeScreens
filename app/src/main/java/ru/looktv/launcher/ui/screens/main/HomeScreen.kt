@@ -46,7 +46,9 @@ import ru.looktv.launcher.ui.view_models.HomeScreenViewModel
 private val NAV_BAR_WIDTH = 68.dp
 
 @Composable
-fun HomeScreen() {
+fun HomeScreen(
+    onProfileClick: () -> Unit
+) {
     val viewModel: HomeScreenViewModel = viewModel()
     val screenModel = viewModel.screenModel.collectAsState()
 
@@ -56,7 +58,8 @@ fun HomeScreen() {
         screenModel.value.promos,
         screenModel.value.apps,
         screenModel.value.continues,
-        screenModel.value.favorites
+        screenModel.value.favorites,
+        onProfileClick
     )
 }
 
@@ -67,7 +70,8 @@ fun TopBanner(
     promos: List<PromoItem>,
     apps: List<AppItem>,
     continues: List<ContinueWatchingItem>,
-    favorites: List<FavoriteItem>
+    favorites: List<FavoriteItem>,
+    onProfileClick: () -> Unit
 ) {
     val selectedItem = remember { mutableStateOf(0) }
     val image = promos[selectedItem.value].image
@@ -112,6 +116,7 @@ fun TopBanner(
                             CircleButton(
                                 iconId = R.drawable.ic_profile,
                             ) {
+                                onProfileClick()
                             }
                         }
                     }

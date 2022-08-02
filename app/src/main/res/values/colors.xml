@@ -3,6 +3,7 @@
     <color name="white">#FFFFFFFF</color>
     <color name="white30">#4DFFFFFF</color>
     <color name="dark80">#CC1E1B3D</color>
+    <color name="darkText">#FF1D1A3B</color>
     <color name="background">#FF1D1A3C</color>
     <color name="white50">#80FFFFFF</color>
     <color name="violet">#8074fe</color>

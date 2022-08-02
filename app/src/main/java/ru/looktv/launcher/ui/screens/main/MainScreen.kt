@@ -18,16 +18,26 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import ru.looktv.launcher.R
 import ru.looktv.launcher.core.ui.common.SelectableCircleButton
 import ru.looktv.launcher.ui.view_models.MainScreenViewModel
 
+internal object Destinations {
+    const val PROFILE = 0
+    const val APPS = 1
+    const val HOME = 2
+//    const val MOVIES = 3
+    const val LANGUAGE = 4
+}
+
 @Composable
 fun MainScreen() {
     val viewModel: MainScreenViewModel = viewModel()
-    val selectedButton = remember { mutableStateOf(0) }
+    val selectedButton = remember { mutableStateOf(Destinations.HOME) }
+    val selectedScreen = remember { mutableStateOf(Destinations.HOME) }
     Box(
         Modifier
             .fillMaxHeight()
@@ -41,25 +51,29 @@ fun MainScreen() {
                 .fillMaxWidth()
                 .fillMaxHeight()
         ) {
-            when (selectedButton.value) {
-                0 -> HomeScreen()
-                1 -> AppsScreen()
+            when (selectedScreen.value) {
+                Destinations.HOME -> HomeScreen() { selectedScreen.value = Destinations.PROFILE }
+                Destinations.APPS -> AppsScreen() { selectedScreen.value = Destinations.PROFILE }
+                Destinations.PROFILE -> ProfileScreen() {
+                    selectedScreen.value = selectedButton.value
+                }
                 else -> EmptyScreen(
                     Modifier.align(Alignment.Center),
-                    text = "Скоро здесь что-то будет"
+                    text = stringResource(R.string.coming_soon)
                 )
             }
         }
 
-        NavigationBar(
-            modifier = Modifier.align(Alignment.CenterStart), selectedButton = selectedButton
-        )
-
+        NavigationBar(Modifier.align(Alignment.CenterStart), selectedButton, selectedScreen)
     }
 }
 
 @Composable
-fun NavigationBar(modifier: Modifier, selectedButton: MutableState<Int>) {
+fun NavigationBar(
+    modifier: Modifier,
+    selectedButton: MutableState<Int>,
+    selectedScreen: MutableState<Int>
+) {
     Box(
         modifier
             .fillMaxHeight()
@@ -76,36 +90,44 @@ fun NavigationBar(modifier: Modifier, selectedButton: MutableState<Int>) {
                 contentDescription = "main_screen_top_logo"
             )
         }
-        TvLookButtons(Modifier.align(Alignment.Center), selectedButton)
+        TvLookButtons(Modifier.align(Alignment.Center), selectedButton, selectedScreen)
     }
 }
 
 @Composable
-fun TvLookButtons(modifier: Modifier, selectedButton: MutableState<Int>) {
+fun TvLookButtons(
+    modifier: Modifier,
+    selectedButton: MutableState<Int>,
+    selectedScreen: MutableState<Int>
+) {
     Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
         SelectableCircleButton(
             iconId = R.drawable.ic_home,
-            isSelected = selectedButton.value == 0
+            isSelected = selectedButton.value == Destinations.HOME
         ) {
-            selectedButton.value = 0
+            selectedButton.value = Destinations.HOME
+            selectedScreen.value = Destinations.HOME
         }
-        SelectableCircleButton(
-            iconId = R.drawable.ic_movie,
-            isSelected = selectedButton.value == 1
-        ) {
-            selectedButton.value = 1
-        }
+//        SelectableCircleButton(
+//            iconId = R.drawable.ic_movie,
+//            isSelected = selectedButton.value == Destinations.MOVIES
+//        ) {
+//            selectedButton.value = Destinations.MOVIES
+//            selectedScreen.value = Destinations.MOVIES
+//        }
         SelectableCircleButton(
             iconId = R.drawable.ic_apps,
-            isSelected = selectedButton.value == 2
+            isSelected = selectedButton.value == Destinations.APPS
         ) {
-            selectedButton.value = 2
+            selectedButton.value = Destinations.APPS
+            selectedScreen.value = Destinations.APPS
         }
         SelectableCircleButton(
             iconId = R.drawable.ic_language,
-            isSelected = selectedButton.value == 3
+            isSelected = selectedButton.value == Destinations.LANGUAGE
         ) {
-            selectedButton.value = 3
+            selectedButton.value = Destinations.LANGUAGE
+            selectedScreen.value = Destinations.LANGUAGE
         }
     }
 }

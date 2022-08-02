@@ -31,7 +31,6 @@ internal object Destinations {
     const val LOGIN = "login"
     const val LOGOUT = "logout"
     const val MAIN_SCREEN = "main_screen"
-    const val OPEN_APP_PROXY_SCREEN = "PROXY_SCREEN"
     const val SPLASH = "splash"
     const val WELCOME = "welcome"
 }
