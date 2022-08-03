@@ -22,6 +22,7 @@ import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -32,12 +33,14 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.AsyncImage
 import ru.looktv.launcher.R
 import ru.looktv.launcher.core.ui.common.CircleButton
 import ru.looktv.launcher.core.ui.common.HorizontalTabs
@@ -53,6 +56,13 @@ fun AppsScreen(
     val screenModel = viewModel.screenModel.collectAsState()
 
     val selectedTabItem = remember { mutableStateOf(0) }
+
+    val context = LocalContext.current.applicationContext
+    val packageManager = LocalContext.current.packageManager
+
+    LaunchedEffect(Unit) {
+        viewModel.loadAppsList(packageManager = packageManager)
+    }
 
     Box(
         Modifier
@@ -72,7 +82,6 @@ fun AppsScreen(
             modifier = Modifier
                 .padding(top = 26.5.dp, start = NAV_BAR_WIDTH + 12.dp)
         ) {
-            // Топ строка
             Row(
                 Modifier
                     .fillMaxWidth()
@@ -93,7 +102,6 @@ fun AppsScreen(
             }
             Spacer(modifier = Modifier.height(26.dp))
 
-            // Табы
             HorizontalTabs(
                 titles = screenModel.value.tabs,
                 positionOfSelected = selectedTabItem.value,
@@ -102,28 +110,28 @@ fun AppsScreen(
                     viewModel.filter(it)
                 }
             )
-
-            // Сетка
             Box() {
                 LazyVerticalGrid(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                     contentPadding = PaddingValues(top = 26.dp, end = 32.dp, bottom = 32.dp),
-                    columns = GridCells.Adaptive(minSize = 99.dp)
+                    columns = GridCells.Adaptive(minSize = 60.dp)
                 ) {
-                    items(screenModel.value.apps + screenModel.value.apps) {
-                        Image(
+                    items(screenModel.value.apps) {
+                        AsyncImage(
                             modifier = Modifier
-                                .size(width = 99.dp, height = 58.dp)
+                                .size(width = 58.dp, height = 58.dp)
                                 .clip(RoundedCornerShape(CornerSize(8.dp)))
                                 .focusable()
-                                .clickable { },
-                            painter = painterResource(id = it.image),
-                            contentDescription = "app_banner",
-                            contentScale = ContentScale.Crop
+                                .clickable { viewModel.launchApp(context, it) },
+                            model = it.icon,
+                            contentDescription = "${it.name}_app_icon",
+                            contentScale = ContentScale.Fit,
                         )
                     }
                 }
+
+
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()

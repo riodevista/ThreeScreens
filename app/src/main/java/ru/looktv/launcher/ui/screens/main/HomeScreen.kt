@@ -1,5 +1,6 @@
 package ru.looktv.launcher.ui.screens.main
 
+import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusable
@@ -20,6 +21,7 @@ import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -28,11 +30,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.AsyncImage
 import ru.looktv.launcher.R
 import ru.looktv.launcher.core.ui.common.BannerOverlay
 import ru.looktv.launcher.core.ui.common.CircleButton
@@ -52,8 +56,17 @@ fun HomeScreen(
     val viewModel: HomeScreenViewModel = viewModel()
     val screenModel = viewModel.screenModel.collectAsState()
 
+    val context = LocalContext.current.applicationContext
+    val packageManager = LocalContext.current.packageManager
+
+    LaunchedEffect(Unit) {
+        viewModel.loadAppsList(packageManager = packageManager)
+    }
+
     TopBanner(
         modifier = Modifier,
+        viewModel = viewModel,
+        context = context,
         screenModel.value.time,
         screenModel.value.promos,
         screenModel.value.apps,
@@ -66,12 +79,14 @@ fun HomeScreen(
 @Composable
 fun TopBanner(
     modifier: Modifier,
+    viewModel: HomeScreenViewModel,
+    context: Context,
     time: String,
     promos: List<PromoItem>,
     apps: List<AppItem>,
     continues: List<ContinueWatchingItem>,
     favorites: List<FavoriteItem>,
-    onProfileClick: () -> Unit
+    onProfileClick: () -> Unit,
 ) {
     val selectedItem = remember { mutableStateOf(0) }
     val image = promos[selectedItem.value].image
@@ -164,15 +179,15 @@ fun TopBanner(
                         contentPadding = PaddingValues(end = 16.dp)
                     ) {
                         items(apps) {
-                            Image(
+                            AsyncImage(
                                 modifier = Modifier
-                                    .size(width = 99.dp, height = 58.dp)
+                                    .size(width = 59.dp, height = 58.dp)
                                     .clip(RoundedCornerShape(CornerSize(8.dp)))
                                     .focusable()
-                                    .clickable { },
-                                painter = painterResource(id = it.image),
+                                    .clickable { viewModel.launchApp(context, it) },
+                                model = it.icon,
                                 contentDescription = "app_banner",
-                                contentScale = ContentScale.Crop
+                                contentScale = ContentScale.Fit
                             )
                         }
                     }
@@ -232,4 +247,3 @@ fun TopBanner(
         }
     }
 }
-
