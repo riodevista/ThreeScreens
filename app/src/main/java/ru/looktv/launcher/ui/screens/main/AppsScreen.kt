@@ -2,6 +2,7 @@ package ru.looktv.launcher.ui.screens.main
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
@@ -14,7 +15,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -112,16 +113,21 @@ fun AppsScreen(
             )
             Box() {
                 LazyVerticalGrid(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(10.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                     contentPadding = PaddingValues(top = 26.dp, end = 32.dp, bottom = 32.dp),
-                    columns = GridCells.Adaptive(minSize = 60.dp)
+                    columns = GridCells.Adaptive(minSize = 58.dp)
                 ) {
                     items(screenModel.value.apps) {
                         AsyncImage(
                             modifier = Modifier
-                                .size(width = 58.dp, height = 58.dp)
-                                .clip(RoundedCornerShape(CornerSize(8.dp)))
+                                .width(58.dp)
+                                .clip(RoundedCornerShape(CornerSize(16.dp)))
+                                .border(
+                                    1.dp,
+                                    colorResource(id = R.color.white30),
+                                    RoundedCornerShape(CornerSize(16.dp))
+                                )
                                 .focusable()
                                 .clickable { viewModel.launchApp(context, it) },
                             model = it.icon,

@@ -2,6 +2,7 @@ package ru.looktv.launcher.ui.screens.main
 
 import android.content.Context
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -175,14 +177,19 @@ fun TopBanner(
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     LazyRow(
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        horizontalArrangement = Arrangement.spacedBy(9.dp),
                         contentPadding = PaddingValues(end = 16.dp)
                     ) {
                         items(apps) {
                             AsyncImage(
                                 modifier = Modifier
-                                    .size(width = 59.dp, height = 58.dp)
-                                    .clip(RoundedCornerShape(CornerSize(8.dp)))
+                                    .width(58.dp)
+                                    .clip(RoundedCornerShape(CornerSize(16.dp)))
+                                    .border(
+                                        1.dp,
+                                        colorResource(id = R.color.white30),
+                                        RoundedCornerShape(CornerSize(16.dp))
+                                    )
                                     .focusable()
                                     .clickable { viewModel.launchApp(context, it) },
                                 model = it.icon,
