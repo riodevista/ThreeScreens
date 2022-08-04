@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
-import ru.looktv.launcher.domain.LauncherRepository
+import ru.looktv.launcher.data.LauncherRepository
 import ru.looktv.launcher.ui.models.AppsScreenModel
 import ru.looktv.launcher.ui.models.common.AppItem
 import ru.looktv.launcher.ui.models.common.mapToAppItemsList

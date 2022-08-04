@@ -1,8 +1,8 @@
 package ru.looktv.launcher.ui.screens.main
 
 import android.content.Context
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -21,6 +22,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -74,6 +76,7 @@ fun HomeScreen(
         screenModel.value.apps,
         screenModel.value.continues,
         screenModel.value.favorites,
+        screenModel.value.showPromoProgress,
         onProfileClick
     )
 }
@@ -88,23 +91,41 @@ fun TopBanner(
     apps: List<AppItem>,
     continues: List<ContinueWatchingItem>,
     favorites: List<FavoriteItem>,
+    showPromoProgress: Boolean,
     onProfileClick: () -> Unit,
 ) {
     val selectedItem = remember { mutableStateOf(0) }
-    val image = promos[selectedItem.value].image
-    val title = promos[selectedItem.value].title
-    val subtitle = promos[selectedItem.value].subtitle
+    val image = if (promos.isNotEmpty()) promos[selectedItem.value].image else null
+    val title = if (promos.isNotEmpty()) promos[selectedItem.value].title else ""
+    val subtitle = if (promos.isNotEmpty()) promos[selectedItem.value].subtitle else ""
     LazyColumn(modifier) {
         item {
             Box() {
-                Image(
-                    modifier = Modifier.fillMaxWidth(),
-                    painter = painterResource(id = image),
+                AsyncImage(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(340.dp),
+                    model = image,
                     contentDescription = "top_film_banner",
-                    contentScale = ContentScale.FillWidth
+                    contentScale = ContentScale.Crop
                 )
 
                 BannerOverlay(modifier = Modifier.height(340.dp))
+
+                AnimatedVisibility(visible = showPromoProgress) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(340.dp)
+                    ) {
+                        CircularProgressIndicator(
+                            Modifier
+                                .align(Alignment.TopCenter)
+                                .padding(top = 100.dp),
+                            color = colorResource(id = R.color.violet)
+                        )
+                    }
+                }
 
                 Column(
                     modifier = Modifier
@@ -183,18 +204,19 @@ fun TopBanner(
                         items(apps) {
                             AsyncImage(
                                 modifier = Modifier
+                                    .defaultMinSize(minHeight = 58.dp)
                                     .width(58.dp)
                                     .clip(RoundedCornerShape(CornerSize(16.dp)))
-                                    .border(
-                                        1.dp,
-                                        colorResource(id = R.color.white30),
-                                        RoundedCornerShape(CornerSize(16.dp))
-                                    )
+//                                    .border(
+//                                        1.dp,
+//                                        colorResource(id = R.color.white30),
+//                                        RoundedCornerShape(CornerSize(16.dp))
+//                                    )
                                     .focusable()
                                     .clickable { viewModel.launchApp(context, it) },
                                 model = it.icon,
                                 contentDescription = "app_banner",
-                                contentScale = ContentScale.Fit
+                                contentScale = ContentScale.FillWidth
                             )
                         }
                     }

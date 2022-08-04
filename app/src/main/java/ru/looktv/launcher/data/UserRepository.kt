@@ -1,4 +1,4 @@
-package ru.looktv.launcher.domain
+package ru.looktv.launcher.data
 
 import android.content.Context
 

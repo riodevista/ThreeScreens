@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
-import ru.looktv.launcher.domain.UserRepository
+import ru.looktv.launcher.data.UserRepository
 import ru.looktv.launcher.ui.models.LoginScreenModel
 import ru.looktv.launcher.utils.Event
 

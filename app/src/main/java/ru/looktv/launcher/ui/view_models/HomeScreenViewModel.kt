@@ -3,11 +3,15 @@ package ru.looktv.launcher.ui.view_models
 import android.content.Context
 import android.content.pm.PackageManager
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import ru.looktv.launcher.R
-import ru.looktv.launcher.domain.LauncherRepository
+import ru.looktv.launcher.data.LauncherRepository
+import ru.looktv.launcher.data.MoviesRepository
 import ru.looktv.launcher.ui.models.ContinueWatchingItem
 import ru.looktv.launcher.ui.models.FavoriteItem
 import ru.looktv.launcher.ui.models.HomeScreenModel
@@ -20,13 +24,7 @@ class HomeScreenViewModel() : ViewModel() {
     private val _screenModel = MutableStateFlow(
         HomeScreenModel(
             time = "12:00",
-            promos = listOf(
-                PromoItem("The boys", "Сезон 1", R.drawable.dummy_film_banner_big),
-                PromoItem("The boys", "Сезон 2", R.drawable.dummy_film_banner_big),
-                PromoItem("The boys 2", "Сезон 1", R.drawable.dummy_film_banner_big),
-                PromoItem("The boys 2", "Сезон 2", R.drawable.dummy_film_banner_big),
-                PromoItem("The boys 2", "Сезон 3", R.drawable.dummy_film_banner_big)
-            ),
+            promos = emptyList(),
             apps = emptyList(),
             continues = listOf(
                 ContinueWatchingItem(R.drawable.dummy_continue),
@@ -42,9 +40,34 @@ class HomeScreenViewModel() : ViewModel() {
                 FavoriteItem(R.drawable.dummy_fav),
                 FavoriteItem(R.drawable.dummy_fav),
                 FavoriteItem(R.drawable.dummy_fav)
-            )
+            ),
+            showPromoProgress = false
         )
     )
+
+    private val moviesRepository = MoviesRepository()
+
+    init {
+        _screenModel.update { it.copy(showPromoProgress = true) }
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                moviesRepository.getMoviesList().let { movies ->
+                    _screenModel.update { screenModel ->
+                        screenModel.copy(promos = movies.map {
+                            PromoItem(
+                                it.alias,
+                                "",
+                                it.banner
+                            )
+                        }, showPromoProgress = false)
+                    }
+                }
+            } catch (e: Exception) {
+                _screenModel.update { it.copy(showPromoProgress = false) }
+                // TODO Handle error
+            }
+        }
+    }
 
     val screenModel: StateFlow<HomeScreenModel> get() = _screenModel
 

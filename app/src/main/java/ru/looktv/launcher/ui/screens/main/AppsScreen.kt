@@ -2,7 +2,6 @@ package ru.looktv.launcher.ui.screens.main
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
@@ -123,16 +122,16 @@ fun AppsScreen(
                             modifier = Modifier
                                 .width(58.dp)
                                 .clip(RoundedCornerShape(CornerSize(16.dp)))
-                                .border(
-                                    1.dp,
-                                    colorResource(id = R.color.white30),
-                                    RoundedCornerShape(CornerSize(16.dp))
-                                )
+//                                .border(
+//                                    1.dp,
+//                                    colorResource(id = R.color.white30),
+//                                    RoundedCornerShape(CornerSize(16.dp))
+//                                )
                                 .focusable()
                                 .clickable { viewModel.launchApp(context, it) },
                             model = it.icon,
                             contentDescription = "${it.name}_app_icon",
-                            contentScale = ContentScale.Fit,
+                            contentScale = ContentScale.FillWidth,
                         )
                     }
                 }

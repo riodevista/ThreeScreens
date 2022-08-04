@@ -1,7 +1,8 @@
-package ru.looktv.launcher.domain
+package ru.looktv.launcher.data
 
 import android.content.Intent
 import android.content.pm.PackageManager
+import ru.looktv.launcher.data.models.ApplicationInfo
 
 
 object LauncherRepository {

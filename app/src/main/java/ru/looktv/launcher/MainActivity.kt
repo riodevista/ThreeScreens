@@ -12,7 +12,7 @@ import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import ru.looktv.launcher.core.ui.theme.ThreeScreensTheme
-import ru.looktv.launcher.domain.UserRepository
+import ru.looktv.launcher.data.UserRepository
 
 @ExperimentalComposeUiApi
 class MainActivity : ComponentActivity() {

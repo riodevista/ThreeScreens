@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import ru.looktv.launcher.domain.UserRepository
+import ru.looktv.launcher.data.UserRepository
 import ru.looktv.launcher.utils.Event
 
 class LogoutScreenViewModel() : ViewModel() {

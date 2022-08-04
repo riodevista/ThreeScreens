@@ -8,13 +8,14 @@ data class HomeScreenModel(
     val promos: List<PromoItem>,
     val apps: List<AppItem>,
     val continues: List<ContinueWatchingItem>,
-    val favorites: List<FavoriteItem>
+    val favorites: List<FavoriteItem>,
+    val showPromoProgress: Boolean
 )
 
 data class PromoItem(
     val title: String,
     val subtitle: String,
-    val image: Int
+    val image: String
 )
 
 data class ContinueWatchingItem(
