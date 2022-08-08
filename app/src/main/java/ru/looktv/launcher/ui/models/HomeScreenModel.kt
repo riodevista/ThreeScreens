@@ -4,7 +4,6 @@ import ru.looktv.launcher.ui.models.common.AppItem
 
 
 data class HomeScreenModel(
-    val time: String,
     val promos: List<PromoItem>,
     val apps: List<AppItem>,
     val continues: List<ContinueWatchingItem>,

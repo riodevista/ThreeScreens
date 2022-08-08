@@ -48,6 +48,7 @@ import ru.looktv.launcher.R
 import ru.looktv.launcher.core.ui.common.BannerOverlay
 import ru.looktv.launcher.core.ui.common.CircleButton
 import ru.looktv.launcher.core.ui.common.HorizontalSelectableDots
+import ru.looktv.launcher.core.ui.common.TextClock
 import ru.looktv.launcher.ui.models.ContinueWatchingItem
 import ru.looktv.launcher.ui.models.FavoriteItem
 import ru.looktv.launcher.ui.models.HomeScreenModel
@@ -161,11 +162,10 @@ private fun TitleRow(
             fontSize = 48.sp
         )
         Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-            Text(
+            TextClock(
                 modifier = Modifier.padding(top = 3.dp),
-                text = screenModel.value.time,
                 fontSize = 16.sp,
-                color = colorResource(id = R.color.white)
+                textColor = colorResource(id = R.color.white)
             )
             CircleButton(
                 iconId = R.drawable.ic_profile,

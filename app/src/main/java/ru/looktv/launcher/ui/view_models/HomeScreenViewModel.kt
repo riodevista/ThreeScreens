@@ -23,7 +23,6 @@ import ru.looktv.launcher.utils.LauncherUtils
 class HomeScreenViewModel() : ViewModel() {
     private val _screenModel = MutableStateFlow(
         HomeScreenModel(
-            time = "12:00",
             promos = emptyList(),
             apps = emptyList(),
             continues = listOf(
