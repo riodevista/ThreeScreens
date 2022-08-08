@@ -2,7 +2,6 @@ package ru.looktv.launcher.core.ui.common
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
@@ -40,7 +39,6 @@ fun HorizontalSelectableDots(
                             if (isSelected) selected else background,
                             shape = CircleShape
                         )
-                        .focusable()
                         .clickable { onClick(i) },
                 )
             }

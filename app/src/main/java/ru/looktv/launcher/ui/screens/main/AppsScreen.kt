@@ -3,7 +3,6 @@ package ru.looktv.launcher.ui.screens.main
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -46,8 +45,6 @@ import ru.looktv.launcher.core.ui.common.CircleButton
 import ru.looktv.launcher.core.ui.common.HorizontalTabs
 import ru.looktv.launcher.ui.view_models.AppsScreenViewModel
 
-private val NAV_BAR_WIDTH = 68.dp
-
 @Composable
 fun AppsScreen(
     onProfileClick: () -> Unit
@@ -80,7 +77,7 @@ fun AppsScreen(
         )
         Column(
             modifier = Modifier
-                .padding(top = 26.5.dp, start = NAV_BAR_WIDTH + 12.dp)
+                .padding(top = 26.5.dp, start = 12.dp)
         ) {
             Row(
                 Modifier
@@ -118,24 +115,21 @@ fun AppsScreen(
                     columns = GridCells.Adaptive(minSize = 58.dp)
                 ) {
                     items(screenModel.value.apps) {
-                        AsyncImage(
+                        Box(
                             modifier = Modifier
-                                .width(58.dp)
-                                .clip(RoundedCornerShape(CornerSize(16.dp)))
-//                                .border(
-//                                    1.dp,
-//                                    colorResource(id = R.color.white30),
-//                                    RoundedCornerShape(CornerSize(16.dp))
-//                                )
-                                .focusable()
-                                .clickable { viewModel.launchApp(context, it) },
-                            model = it.icon,
-                            contentDescription = "${it.name}_app_icon",
-                            contentScale = ContentScale.FillWidth,
-                        )
+                                .clip(RoundedCornerShape(CornerSize(2.dp)))
+                                .clickable { viewModel.launchApp(context, it) }) {
+                            AsyncImage(
+                                modifier = Modifier
+                                    .width(58.dp)
+                                    .clip(RoundedCornerShape(CornerSize(16.dp))),
+                                model = it.icon,
+                                contentDescription = "${it.name}_app_icon",
+                                contentScale = ContentScale.FillWidth,
+                            )
+                        }
                     }
                 }
-
 
                 Box(
                     modifier = Modifier

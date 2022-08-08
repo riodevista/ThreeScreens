@@ -41,8 +41,6 @@ import ru.looktv.launcher.ui.models.PaymentMethodModel
 import ru.looktv.launcher.ui.models.ProfileSubscriptionModel
 import ru.looktv.launcher.ui.view_models.ProfileScreenViewModel
 
-private val NAV_BAR_WIDTH = 68.dp
-
 @Composable
 fun ProfileScreen(
     back: () -> Unit
@@ -69,7 +67,7 @@ fun ProfileScreen(
         )
         Column(
             modifier = Modifier
-                .padding(top = 26.5.dp, start = NAV_BAR_WIDTH + 12.dp)
+                .padding(top = 26.5.dp, start = 12.dp)
         ) {
             Row(
                 Modifier

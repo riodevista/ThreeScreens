@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -26,6 +27,8 @@ import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -47,11 +50,10 @@ import ru.looktv.launcher.core.ui.common.CircleButton
 import ru.looktv.launcher.core.ui.common.HorizontalSelectableDots
 import ru.looktv.launcher.ui.models.ContinueWatchingItem
 import ru.looktv.launcher.ui.models.FavoriteItem
+import ru.looktv.launcher.ui.models.HomeScreenModel
 import ru.looktv.launcher.ui.models.PromoItem
 import ru.looktv.launcher.ui.models.common.AppItem
 import ru.looktv.launcher.ui.view_models.HomeScreenViewModel
-
-private val NAV_BAR_WIDTH = 68.dp
 
 @Composable
 fun HomeScreen(
@@ -59,6 +61,10 @@ fun HomeScreen(
 ) {
     val viewModel: HomeScreenViewModel = viewModel()
     val screenModel = viewModel.screenModel.collectAsState()
+    val promos = screenModel.value.promos
+    val apps = screenModel.value.apps
+    val continues = screenModel.value.continues
+    val favorites = screenModel.value.favorites
 
     val context = LocalContext.current.applicationContext
     val packageManager = LocalContext.current.packageManager
@@ -67,40 +73,22 @@ fun HomeScreen(
         viewModel.loadAppsList(packageManager = packageManager)
     }
 
-    TopBanner(
-        modifier = Modifier,
-        viewModel = viewModel,
-        context = context,
-        screenModel.value.time,
-        screenModel.value.promos,
-        screenModel.value.apps,
-        screenModel.value.continues,
-        screenModel.value.favorites,
-        screenModel.value.showPromoProgress,
-        onProfileClick
-    )
-}
-
-@Composable
-fun TopBanner(
-    modifier: Modifier,
-    viewModel: HomeScreenViewModel,
-    context: Context,
-    time: String,
-    promos: List<PromoItem>,
-    apps: List<AppItem>,
-    continues: List<ContinueWatchingItem>,
-    favorites: List<FavoriteItem>,
-    showPromoProgress: Boolean,
-    onProfileClick: () -> Unit,
-) {
     val selectedItem = remember { mutableStateOf(0) }
     val image = if (promos.isNotEmpty()) promos[selectedItem.value].image else null
     val title = if (promos.isNotEmpty()) promos[selectedItem.value].title else ""
     val subtitle = if (promos.isNotEmpty()) promos[selectedItem.value].subtitle else ""
-    LazyColumn(modifier) {
+
+    LazyColumn(
+        Modifier
+            .fillMaxWidth()
+            .fillMaxHeight()
+    ) {
         item {
-            Box() {
+            Box(
+                Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight()
+            ) {
                 AsyncImage(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -112,7 +100,7 @@ fun TopBanner(
 
                 BannerOverlay(modifier = Modifier.height(340.dp))
 
-                AnimatedVisibility(visible = showPromoProgress) {
+                AnimatedVisibility(visible = screenModel.value.showPromoProgress) {
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -129,149 +117,207 @@ fun TopBanner(
 
                 Column(
                     modifier = Modifier
-                        .padding(top = 15.dp, start = NAV_BAR_WIDTH + 12.dp)
+                        .padding(top = 15.dp, start = 12.dp)
 
                 ) {
-                    Row(
-                        Modifier
-                            .fillMaxWidth()
-                            .padding(end = 32.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = title,
-                            color = colorResource(id = R.color.white),
-                            fontSize = 48.sp
-                        )
-                        Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                            Text(
-                                modifier = Modifier.padding(top = 3.dp),
-                                text = time,
-                                fontSize = 16.sp,
-                                color = colorResource(id = R.color.white)
-                            )
-                            CircleButton(
-                                iconId = R.drawable.ic_profile,
-                            ) {
-                                onProfileClick()
-                            }
-                        }
-                    }
+                    TitleRow(title, screenModel, onProfileClick)
 
-                    Text(
-                        modifier = Modifier.alpha(0.5f),
-                        text = subtitle,
-                        color = colorResource(id = R.color.white),
-                        fontSize = 16.sp,
-                    )
+                    Subtitle(subtitle)
 
-                    Row(
-                        Modifier
-                            .fillMaxWidth()
-                            .padding(top = 40.dp, end = 32.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Image(
-                            modifier = Modifier
-                                .size(width = 88.dp, height = 32.dp)
-                                .focusable()
-                                .clickable {},
-                            painter = painterResource(id = R.drawable.ic_button_watch),
-                            contentDescription = "to_watch",
-                            contentScale = ContentScale.Fit
-                        )
-                        HorizontalSelectableDots(
-                            numberOfDots = promos.size,
-                            positionOfSelected = selectedItem.value
-                        ) { position ->
-                            selectedItem.value = position
-                        }
-                    }
+                    WatchButtonAndSelectableDotsRow(promos, selectedItem)
 
                     Spacer(modifier = Modifier.height(43.dp))
-                    Text(
-                        text = "Приложения",
-                        color = colorResource(id = R.color.white50),
-                        fontSize = 16.sp
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    LazyRow(
-                        horizontalArrangement = Arrangement.spacedBy(9.dp),
-                        contentPadding = PaddingValues(end = 16.dp)
-                    ) {
-                        items(apps) {
-                            AsyncImage(
-                                modifier = Modifier
-                                    .defaultMinSize(minHeight = 58.dp)
-                                    .width(58.dp)
-                                    .clip(RoundedCornerShape(CornerSize(16.dp)))
-//                                    .border(
-//                                        1.dp,
-//                                        colorResource(id = R.color.white30),
-//                                        RoundedCornerShape(CornerSize(16.dp))
-//                                    )
-                                    .focusable()
-                                    .clickable { viewModel.launchApp(context, it) },
-                                model = it.icon,
-                                contentDescription = "app_banner",
-                                contentScale = ContentScale.FillWidth
-                            )
-                        }
-                    }
+                    AppsList(apps, viewModel, context)
 
                     Spacer(modifier = Modifier.height(16.dp))
-                    Text(
-                        text = "Продолжить просмотр",
-                        color = colorResource(id = R.color.white50),
-                        fontSize = 16.sp
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    LazyRow(
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        contentPadding = PaddingValues(end = 16.dp)
-                    ) {
-                        items(continues) {
-                            Image(
-                                modifier = Modifier
-                                    .size(width = 207.dp, height = 116.dp)
-                                    .clip(RoundedCornerShape(CornerSize(8.dp)))
-                                    .focusable()
-                                    .clickable { },
-                                painter = painterResource(id = it.image),
-                                contentDescription = "continue_banner",
-                                contentScale = ContentScale.Crop
-                            )
-                        }
-                    }
+                    ContinueWatchingList(continues)
 
                     Spacer(modifier = Modifier.height(16.dp))
-                    Text(
-                        text = "Мой лист",
-                        color = colorResource(id = R.color.white50),
-                        fontSize = 16.sp
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    LazyRow(
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        contentPadding = PaddingValues(end = 16.dp)
-                    ) {
-                        items(favorites) {
-                            Image(
-                                modifier = Modifier
-                                    .size(width = 207.dp, height = 116.dp)
-                                    .clip(RoundedCornerShape(CornerSize(8.dp)))
-                                    .focusable()
-                                    .clickable { },
-                                painter = painterResource(id = it.image),
-                                contentDescription = "fav_banner",
-                                contentScale = ContentScale.Crop
-                            )
-                        }
-                    }
+                    FavoritesList(favorites)
+
                     Spacer(modifier = Modifier.height(16.dp))
                 }
+            }
+        }
+    }
+}
+
+@Composable
+private fun TitleRow(
+    title: String,
+    screenModel: State<HomeScreenModel>,
+    onProfileClick: () -> Unit
+) {
+    Row(
+        Modifier
+            .fillMaxWidth()
+            .padding(end = 32.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = title,
+            color = colorResource(id = R.color.white),
+            fontSize = 48.sp
+        )
+        Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+            Text(
+                modifier = Modifier.padding(top = 3.dp),
+                text = screenModel.value.time,
+                fontSize = 16.sp,
+                color = colorResource(id = R.color.white)
+            )
+            CircleButton(
+                iconId = R.drawable.ic_profile,
+            ) {
+                onProfileClick()
+            }
+        }
+    }
+}
+
+@Composable
+private fun Subtitle(subtitle: String) {
+    Text(
+        modifier = Modifier.alpha(0.5f),
+        text = subtitle,
+        color = colorResource(id = R.color.white),
+        fontSize = 16.sp,
+    )
+}
+
+@Composable
+private fun WatchButtonAndSelectableDotsRow(
+    promos: List<PromoItem>,
+    selectedItem: MutableState<Int>
+) {
+    Row(
+        Modifier
+            .fillMaxWidth()
+            .padding(top = 40.dp, end = 32.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Box(
+            modifier = Modifier
+                .clip(RoundedCornerShape(CornerSize(2.dp)))
+                .clickable { }
+        ) {
+            Image(
+                modifier = Modifier
+                    .size(width = 88.dp, height = 32.dp),
+                painter = painterResource(id = R.drawable.ic_button_watch),
+                contentDescription = "to_watch",
+                contentScale = ContentScale.Fit
+            )
+        }
+
+        HorizontalSelectableDots(
+            numberOfDots = promos.size,
+            positionOfSelected = selectedItem.value
+        ) { position ->
+            selectedItem.value = position
+        }
+    }
+}
+
+@Composable
+private fun AppsList(
+    apps: List<AppItem>,
+    viewModel: HomeScreenViewModel,
+    context: Context
+) {
+    Text(
+        text = "Приложения",
+        color = colorResource(id = R.color.white50),
+        fontSize = 16.sp
+    )
+    Spacer(modifier = Modifier.height(8.dp))
+
+    LazyRow(
+        horizontalArrangement = Arrangement.spacedBy(9.dp),
+        contentPadding = PaddingValues(end = 16.dp)
+    ) {
+        items(apps) {
+            Box(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(CornerSize(2.dp)))
+                    .clickable { viewModel.launchApp(context, it) }) {
+                AsyncImage(
+                    modifier = Modifier
+                        .defaultMinSize(minHeight = 58.dp)
+                        .width(58.dp)
+                        .clip(RoundedCornerShape(CornerSize(16.dp))),
+                    model = it.icon,
+                    contentDescription = "app_banner",
+                    contentScale = ContentScale.FillWidth
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun ContinueWatchingList(continues: List<ContinueWatchingItem>) {
+    Text(
+        text = "Продолжить просмотр",
+        color = colorResource(id = R.color.white50),
+        fontSize = 16.sp
+    )
+    Spacer(modifier = Modifier.height(8.dp))
+
+    LazyRow(
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        contentPadding = PaddingValues(end = 16.dp)
+    ) {
+        items(continues) {
+            Box(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(CornerSize(8.dp)))
+                    .clickable { }
+            ) {
+                Image(
+                    modifier = Modifier
+                        .size(width = 207.dp, height = 116.dp)
+                        .clip(RoundedCornerShape(CornerSize(8.dp)))
+                        .focusable()
+                        .clickable { },
+                    painter = painterResource(id = it.image),
+                    contentDescription = "continue_banner",
+                    contentScale = ContentScale.Crop
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun FavoritesList(favorites: List<FavoriteItem>) {
+    Text(
+        text = "Мой лист",
+        color = colorResource(id = R.color.white50),
+        fontSize = 16.sp
+    )
+    Spacer(modifier = Modifier.height(8.dp))
+
+    LazyRow(
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        contentPadding = PaddingValues(end = 16.dp)
+    ) {
+        items(favorites) {
+            Box(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(CornerSize(8.dp)))
+                    .clickable { }
+            ) {
+                Image(
+                    modifier = Modifier
+                        .size(width = 207.dp, height = 116.dp)
+                        .clip(RoundedCornerShape(CornerSize(8.dp))),
+                    painter = painterResource(id = it.image),
+                    contentDescription = "fav_banner",
+                    contentScale = ContentScale.Crop
+                )
             }
         }
     }

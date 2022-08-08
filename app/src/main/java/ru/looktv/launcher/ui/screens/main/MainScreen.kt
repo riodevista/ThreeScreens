@@ -1,10 +1,13 @@
 package ru.looktv.launcher.ui.screens.main
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.focusGroup
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -29,8 +32,6 @@ internal object Destinations {
     const val PROFILE = 0
     const val APPS = 1
     const val HOME = 2
-//    const val MOVIES = 3
-    const val LANGUAGE = 4
 }
 
 @Composable
@@ -46,11 +47,12 @@ fun MainScreen() {
             .background(colorResource(id = R.color.background))
     ) {
 
-        Box(
+        Row(
             Modifier
                 .fillMaxWidth()
                 .fillMaxHeight()
         ) {
+            NavigationBar(Modifier, selectedButton, selectedScreen)
             when (selectedScreen.value) {
                 Destinations.HOME -> HomeScreen() { selectedScreen.value = Destinations.PROFILE }
                 Destinations.APPS -> AppsScreen() { selectedScreen.value = Destinations.PROFILE }
@@ -58,13 +60,12 @@ fun MainScreen() {
                     selectedScreen.value = selectedButton.value
                 }
                 else -> EmptyScreen(
-                    Modifier.align(Alignment.Center),
+                    Modifier,
                     text = stringResource(R.string.coming_soon)
                 )
             }
         }
 
-        NavigationBar(Modifier.align(Alignment.CenterStart), selectedButton, selectedScreen)
     }
 }
 
@@ -94,13 +95,14 @@ fun NavigationBar(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun TvLookButtons(
     modifier: Modifier,
     selectedButton: MutableState<Int>,
     selectedScreen: MutableState<Int>
 ) {
-    Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
+    Column(modifier = modifier.focusGroup(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
         SelectableCircleButton(
             iconId = R.drawable.ic_home,
             isSelected = selectedButton.value == Destinations.HOME
@@ -108,26 +110,12 @@ fun TvLookButtons(
             selectedButton.value = Destinations.HOME
             selectedScreen.value = Destinations.HOME
         }
-//        SelectableCircleButton(
-//            iconId = R.drawable.ic_movie,
-//            isSelected = selectedButton.value == Destinations.MOVIES
-//        ) {
-//            selectedButton.value = Destinations.MOVIES
-//            selectedScreen.value = Destinations.MOVIES
-//        }
         SelectableCircleButton(
             iconId = R.drawable.ic_apps,
             isSelected = selectedButton.value == Destinations.APPS
         ) {
             selectedButton.value = Destinations.APPS
             selectedScreen.value = Destinations.APPS
-        }
-        SelectableCircleButton(
-            iconId = R.drawable.ic_language,
-            isSelected = selectedButton.value == Destinations.LANGUAGE
-        ) {
-            selectedButton.value = Destinations.LANGUAGE
-            selectedScreen.value = Destinations.LANGUAGE
         }
     }
 }
