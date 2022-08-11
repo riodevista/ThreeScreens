@@ -11,13 +11,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -53,7 +51,8 @@ import ru.looktv.launcher.ui.models.ContinueWatchingItem
 import ru.looktv.launcher.ui.models.FavoriteItem
 import ru.looktv.launcher.ui.models.HomeScreenModel
 import ru.looktv.launcher.ui.models.PromoItem
-import ru.looktv.launcher.ui.models.common.AppItem
+import ru.looktv.launcher.ui.models.common.AppItemModel
+import ru.looktv.launcher.ui.screens.common.AppView
 import ru.looktv.launcher.ui.view_models.HomeScreenViewModel
 
 @Composable
@@ -223,7 +222,7 @@ private fun WatchButtonAndSelectableDotsRow(
 
 @Composable
 private fun AppsList(
-    apps: List<AppItem>,
+    apps: List<AppItemModel>,
     viewModel: HomeScreenViewModel,
     context: Context
 ) {
@@ -239,20 +238,7 @@ private fun AppsList(
         contentPadding = PaddingValues(end = 16.dp)
     ) {
         items(apps) {
-            Box(
-                modifier = Modifier
-                    .clip(RoundedCornerShape(CornerSize(2.dp)))
-                    .clickable { viewModel.launchApp(context, it) }) {
-                AsyncImage(
-                    modifier = Modifier
-                        .defaultMinSize(minHeight = 58.dp)
-                        .width(58.dp)
-                        .clip(RoundedCornerShape(CornerSize(16.dp))),
-                    model = it.icon,
-                    contentDescription = "app_banner",
-                    contentScale = ContentScale.FillWidth
-                )
-            }
+            AppView(it)
         }
     }
 }

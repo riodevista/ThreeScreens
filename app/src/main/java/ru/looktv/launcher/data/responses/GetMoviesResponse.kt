@@ -1,11 +1,7 @@
-package ru.looktv.launcher.data
+package ru.looktv.launcher.data.responses
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-
-data class MoviesResponse(
-    val movies: List<MovieDto>
-)
 
 @Serializable
 data class MovieDto(

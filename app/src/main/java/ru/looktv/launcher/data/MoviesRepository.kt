@@ -4,6 +4,7 @@ import io.ktor.client.call.*
 import io.ktor.client.request.*
 import ru.looktv.launcher.core.network.createHttpClient
 import ru.looktv.launcher.data.models.Movie
+import ru.looktv.launcher.data.responses.MovieDto
 
 private const val BASE_URL = "https://api.sandbox.start.film/"
 private const val DEV_TOKEN = "F50YJNNRFLcERsTQLrgX0SunrPEIyWTK"

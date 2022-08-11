@@ -1,11 +1,11 @@
 package ru.looktv.launcher.ui.models
 
-import ru.looktv.launcher.ui.models.common.AppItem
+import ru.looktv.launcher.ui.models.common.AppItemModel
 
 
 data class HomeScreenModel(
     val promos: List<PromoItem>,
-    val apps: List<AppItem>,
+    val apps: List<AppItemModel>,
     val continues: List<ContinueWatchingItem>,
     val favorites: List<FavoriteItem>,
     val showPromoProgress: Boolean

@@ -1,6 +1,5 @@
 package ru.looktv.launcher.ui.view_models
 
-import android.content.Context
 import android.content.pm.PackageManager
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -10,17 +9,17 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.looktv.launcher.R
-import ru.looktv.launcher.data.LauncherRepository
 import ru.looktv.launcher.data.MoviesRepository
+import ru.looktv.launcher.domain.AppsInteractor
 import ru.looktv.launcher.ui.models.ContinueWatchingItem
 import ru.looktv.launcher.ui.models.FavoriteItem
 import ru.looktv.launcher.ui.models.HomeScreenModel
 import ru.looktv.launcher.ui.models.PromoItem
-import ru.looktv.launcher.ui.models.common.AppItem
-import ru.looktv.launcher.ui.models.common.mapToAppItemsList
-import ru.looktv.launcher.utils.LauncherUtils
 
 class HomeScreenViewModel() : ViewModel() {
+    private val moviesRepository = MoviesRepository()
+    private val appsInteractor = AppsInteractor
+
     private val _screenModel = MutableStateFlow(
         HomeScreenModel(
             promos = emptyList(),
@@ -43,8 +42,6 @@ class HomeScreenViewModel() : ViewModel() {
             showPromoProgress = false
         )
     )
-
-    private val moviesRepository = MoviesRepository()
 
     init {
         _screenModel.update { it.copy(showPromoProgress = true) }
@@ -71,11 +68,7 @@ class HomeScreenViewModel() : ViewModel() {
     val screenModel: StateFlow<HomeScreenModel> get() = _screenModel
 
     fun loadAppsList(packageManager: PackageManager) {
-        val appsList = LauncherRepository.loadAppsList(packageManager).mapToAppItemsList()
+        val appsList = appsInteractor.getAppsListForView(packageManager)
         _screenModel.update { it.copy(apps = appsList) }
-    }
-
-    fun launchApp(context: Context, appItem: AppItem) {
-        LauncherUtils.startApp(context, appItem.packageName)
     }
 }

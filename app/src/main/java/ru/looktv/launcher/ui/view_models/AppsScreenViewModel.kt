@@ -1,20 +1,18 @@
 package ru.looktv.launcher.ui.view_models
 
-import android.content.Context
 import android.content.pm.PackageManager
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
-import ru.looktv.launcher.data.LauncherRepository
+import ru.looktv.launcher.domain.AppsInteractor
 import ru.looktv.launcher.ui.models.AppsScreenModel
-import ru.looktv.launcher.ui.models.common.AppItem
-import ru.looktv.launcher.ui.models.common.mapToAppItemsList
-import ru.looktv.launcher.utils.LauncherUtils
+import ru.looktv.launcher.ui.models.common.AppItemModel
 import kotlin.random.Random
 
 class AppsScreenViewModel() : ViewModel() {
-    private var appsList = emptyList<AppItem>()
+    private val appsInteractor = AppsInteractor
+    private var appsList = emptyList<AppItemModel>()
     private val _screenModel = MutableStateFlow(
         AppsScreenModel(
             tabs = listOf(
@@ -26,7 +24,7 @@ class AppsScreenViewModel() : ViewModel() {
     val screenModel: StateFlow<AppsScreenModel> get() = _screenModel
 
     fun loadAppsList(packageManager: PackageManager) {
-        appsList = LauncherRepository.loadAppsList(packageManager).mapToAppItemsList()
+        appsList = appsInteractor.getAppsListForView(packageManager)
         _screenModel.update { it.copy(apps = appsList) }
     }
 
@@ -62,9 +60,5 @@ class AppsScreenViewModel() : ViewModel() {
                 }
             }
         }
-    }
-
-    fun launchApp(context: Context, appItem: AppItem) {
-        LauncherUtils.startApp(context, appItem.packageName)
     }
 }

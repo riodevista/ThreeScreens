@@ -6,5 +6,6 @@ class ApplicationInfo(
     var name: String? = null,
     var packageName: String? = null,
     var label: String? = null,
-    var icon: Drawable? = null
+    var icon: Drawable? = null,
+    var version: Long = 0
 )
